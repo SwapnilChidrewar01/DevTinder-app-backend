@@ -1,0 +1,24 @@
+{
+  "name": "js-set-up-",
+  "version": "1.0.0",
+  "description": "this is the repo for the initial set up of the node js",
+  "main": "src/app.js",
+  "dependencies": {
+    "bson": "^6.10.4",
+    "express": "^5.2.1",
+    "memory-pager": "^1.5.0",
+    "mongodb": "^6.21.0",
+    "mongodb-connection-string-url": "^3.0.2",
+    "punycode": "^2.3.1",
+    "sparse-bitfield": "^3.0.3",
+    "tr46": "^5.1.1",
+    "webidl-conversions": "^7.0.0",
+    "whatwg-url": "^14.2.0"
+  },
+  "scripts": {
+    "dev": "nodemon src/app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
