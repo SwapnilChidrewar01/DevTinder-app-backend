@@ -63,6 +63,29 @@ const app = express()
 // app.post('/', (req, res) => {
 //     res.send('you posted a request')
 // })  
+
+
+const User = require('./model/user')
+
+app.post('/signup', async (req, res) => {
+
+    const user = new User({
+        firstName: 'Swapnil',
+        lastName: 'Chidrawar',
+        emailId: 'swapnilchidrawar@gmail.com',
+        password: 'swapnil123',
+        age: 22,
+        gender: 'Male'
+    })
+    try {
+        await user.save()
+        res.status(201).send(user)
+    } catch (error) {
+        console.log(error)
+        res.status(500).send(error)
+    }
+})
+
 connectDB().then(() => {
     console.log('Connected to MongoDB')
     app.listen(3000, () => {
