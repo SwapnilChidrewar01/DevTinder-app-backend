@@ -31,15 +31,47 @@
 // }
 // runGetStarted().catch(console.dir);
 
+
 const express = require('express')
+const connectDB = require('./config/database')
 
 const app = express()
+//middleware
 
-app.get('/', (req, res) => {
-    res.send('Hello World!')
-})  
+// const auth = require('./middleware/auth')
+// const userauth = require('./middleware/user')
 
-app.listen(3000, () => {
+
+// app.use("/admin", auth)
+// app.get("/admin/getalldata", (req, res) => {
+//     res.send('all the data related to the admin')
+// })  
+
+// app.get("/user", userauth, (req, res) => {
+//     try {
+//         //get the data from the database and respond to the client server
+//           res.send('all the data related to the user')
+//     } catch (error) {
+//         console.log(error)
+//         res.status(500).send(error)
+//     }
+  
+// })
+// app.get('/', (req, res) => {
+//     res.send('Hello World!')
+// })  
+// app.post('/', (req, res) => {
+//     res.send('you posted a request')
+// })  
+connectDB().then(() => {
+    console.log('Connected to MongoDB')
+    app.listen(3000, () => {
     console.log('Server is running on port 3000')
 })
+})
+.catch((error) => {
+    console.log(error)
+})
+
+
 
