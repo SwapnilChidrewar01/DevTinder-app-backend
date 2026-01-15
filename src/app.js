@@ -66,17 +66,80 @@ const app = express()
 
 
 const User = require('./model/user')
+app.use(express.json())
+// user fine and update user by id 
+app.patch("/user",async(req,res)=>{
+    console.log(req.body)
+const userid=req.body.userid
 
+try{
+const user=await User.findByIdAndUpdate({_id:userid},req.body,{new:true})
+if(!user){
+    return res.status(404).send('User not found')
+}else{
+res.status(200).send({message:"User updated successfully",user})
+}
+
+}catch(error){
+    console.log(error)
+    res.status(500).send(error)
+}
+})
+// delete user api 
+app.delete("/user",async(req,res)=>{
+    console.log(req.body)
+const userid=req.body.userid
+
+try{
+const user=await User.findByIdAndDelete({_id:userid})
+if(!user){
+    return res.status(404).send('User not found')
+}else{
+res.status(200).send({message:"User deleted successfully",user})
+}
+
+
+}catch(error){
+    console.log(error)
+    res.status(500).send(error)
+}
+})
+// for one user get user by the email adress 
+app.get("/userone", async (req, res) => {
+    const emailId = req.body.emailId
+    if ( !emailId) {
+        return res.status(400).send('Email is required')
+    }
+    try {
+        const user = await User.findOne({emailId: emailId})
+        if (!user) {
+            return res.status(404).send('User not found')
+        }else{
+               res.status(200).send({user})
+        }
+     
+    } catch (error) {
+        console.log(error)
+        res.status(500).send(error)
+    }
+})
+// feed api for that need all user get api 
+app.get("/users", async (req, res) => {
+    try {
+        const users = await User.find()
+        if (!users) {
+            return res.status(404).send('Users not found')
+        } else {
+            res.status(200).send({users})
+        }
+    } catch (error) {
+        console.log(error)
+        res.status(500).send(error)
+    }
+})
 app.post('/signup', async (req, res) => {
-
-    const user = new User({
-        firstName: 'Swapnil',
-        lastName: 'Chidrawar',
-        emailId: 'swapnilchidrawar@gmail.com',
-        password: 'swapnil123',
-        age: 22,
-        gender: 'Male'
-    })
+    // console.log(req.body)
+    const user = new User(req.body)
     try {
         await user.save()
         res.status(201).send(user)
