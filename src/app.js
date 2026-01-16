@@ -55,7 +55,7 @@ const app = express()
 //         console.log(error)
 //         res.status(500).send(error)
 //     }
-  
+
 // })
 // app.get('/', (req, res) => {
 //     res.send('Hello World!')
@@ -68,56 +68,65 @@ const app = express()
 const User = require('./model/user')
 app.use(express.json())
 // user fine and update user by id 
-app.patch("/user",async(req,res)=>{
+app.patch("/user/:userid", async (req, res) => {
     console.log(req.body)
-const userid=req.body.userid
+    const userid = req.params.userid
+    const value = req.body
 
-try{
-const user=await User.findByIdAndUpdate({_id:userid},req.body,{new:true})
-if(!user){
-    return res.status(404).send('User not found')
-}else{
-res.status(200).send({message:"User updated successfully",user})
-}
+    try {
+        const allowedUpdates = ["age", "photo_url", "about", "skills"]
+        const canupdate = Object.keys(value).every((value) => allowedUpdates.includes(value))
+        if (!canupdate) {
+            return res.status(500).send('Invalid update')
+        }
+        if(value.skills.length>10){
+            return res.status(500).send('skills can not be more than 10')
+        }
+        const user = await User.findByIdAndUpdate({ _id: userid }, req.body, { new: true })
+        if (!user) {
+            return res.status(404).send('User not found')
+        } else {
+            res.status(200).send({ message: "User updated successfully", user })
+        }
 
-}catch(error){
-    console.log(error)
-    res.status(500).send(error)
-}
+    } catch (error) {
+        console.log(error)
+        res.status(500).send(error)
+    }
 })
 // delete user api 
-app.delete("/user",async(req,res)=>{
+app.delete("/user", async (req, res) => {
     console.log(req.body)
-const userid=req.body.userid
+    const userid = req.body.userid
 
-try{
-const user=await User.findByIdAndDelete({_id:userid})
-if(!user){
-    return res.status(404).send('User not found')
-}else{
-res.status(200).send({message:"User deleted successfully",user})
-}
+    try {
+        const user = await User.findByIdAndDelete({ _id: userid })
+        if (!user) {
+            return res.status(404).send('User not found')
+        } else {
+            res.status(200).send({ message: "User deleted successfully", user })
+        }
 
 
-}catch(error){
-    console.log(error)
-    res.status(500).send(error)
-}
+    } catch (error) {
+        console.log(error)
+        res.status(500).send(error)
+    }
 })
 // for one user get user by the email adress 
 app.get("/userone", async (req, res) => {
     const emailId = req.body.emailId
-    if ( !emailId) {
+    if (!emailId) {
         return res.status(400).send('Email is required')
     }
     try {
-        const user = await User.findOne({emailId: emailId})
+        const user = await User.findOne({ emailId: emailId })
         if (!user) {
             return res.status(404).send('User not found')
-        }else{
-               res.status(200).send({user})
+        } else {
+            res.status(200).send({ user })
         }
-     
+
     } catch (error) {
         console.log(error)
         res.status(500).send(error)
@@ -130,7 +139,7 @@ app.get("/users", async (req, res) => {
         if (!users) {
             return res.status(404).send('Users not found')
         } else {
-            res.status(200).send({users})
+            res.status(200).send({ users })
         }
     } catch (error) {
         console.log(error)
@@ -152,12 +161,12 @@ app.post('/signup', async (req, res) => {
 connectDB().then(() => {
     console.log('Connected to MongoDB')
     app.listen(3000, () => {
-    console.log('Server is running on port 3000')
+        console.log('Server is running on port 3000')
+    })
 })
-})
-.catch((error) => {
-    console.log(error)
-})
+    .catch((error) => {
+        console.log(error)
+    })
 
 
 
